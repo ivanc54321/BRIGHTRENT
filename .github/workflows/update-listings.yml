@@ -1,0 +1,33 @@
+name: Update Rental Listings Feed
+
+on:
+  schedule:
+    # Run every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Aggregator Scraper
+        run: |
+          node scripts/scraper.js
+
+      - name: Commit and Push Updated Listings
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "BrightRent Aggregator Bot"
+          git add data/listings.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(feed): auto-update Thanet cheap rent listings [skip ci]" && git push)

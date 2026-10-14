@@ -1,0 +1,20 @@
+{
+  "name": "brightrent-aggregator",
+  "version": "1.0.0",
+  "description": "Thanet & Cheap Rent Property Aggregator (SpareRoom, Thanet Council, OpenRent, Gumtree, Local Agents)",
+  "main": "scripts/scraper.js",
+  "scripts": {
+    "scrape": "node scripts/scraper.js",
+    "test": "node -e \"require('./scripts/scraper.js')\""
+  },
+  "keywords": [
+    "thanet",
+    "cheap-rent",
+    "spareroom",
+    "openrent",
+    "thanet-council",
+    "property-aggregator"
+  ],
+  "author": "BrightRent",
+  "license": "ISC"
+}

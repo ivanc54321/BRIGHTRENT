@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrightRent | Thanet Cheap Rent & Property Aggregator</title>
+  <meta name="description"
+    content="BrightRent aggregates cheap rooms, studios, and rental flats across Margate, Ramsgate, and Broadstairs from SpareRoom, Thanet Council, OpenRent, Gumtree, and local agents.">
+  <!-- Google Fonts: Plus Jakarta Sans for high-end modern aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Top Hero Section with Background and Overlay -->
+  <header class="hero-container" id="hero-section">
+    <!-- Navbar -->
+    <nav class="navbar" id="main-nav">
+      <div class="nav-content">
+        <!-- Logo -->
+        <a href="#" class="logo" id="brand-logo">
+          <div class="logo-icon-wrap">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"></path>
+              <polyline points="9 21 9 12 15 12 15 21"></polyline>
+            </svg>
+          </div>
+          <span class="logo-text">BrightRent<span class="logo-tag">Thanet</span></span>
+        </a>
+
+        <!-- Nav Links -->
+        <ul class="nav-links" id="nav-links-list">
+          <li><a href="#hero-section" class="nav-link active">Home</a></li>
+          <li><a href="#aggregator-section" class="nav-link">Cheap Listings</a></li>
+          <li><a href="#sources-overview" class="nav-link">Sources</a></li>
+          <li><a href="#thanet-guide" class="nav-link">Thanet Rent Guide</a></li>
+          <li><a href="#contacts" class="nav-link">Contact</a></li>
+        </ul>
+
+        <!-- Action CTA -->
+        <div class="nav-cta">
+          <a href="#aggregator-section" class="btn-try-now" id="btn-try-now">Find Cheap Rent</a>
+          <!-- Mobile Menu Toggle Button -->
+          <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="hero-body">
+      <div class="hero-content-wrapper">
+        <div class="hero-text-block">
+          <div class="hero-badge">
+            <span class="pulse-dot"></span> Live Thanet Aggregator Feed (CT9, CT10, CT11, CT12)
+          </div>
+          <h1 class="hero-title">
+            Cheap Rent in Thanet,<br>
+            All in One Place
+          </h1>
+          <p class="hero-subtitle">
+            Instantly compare low-cost rooms, studios, and affordable flats across Margate, Ramsgate, and Broadstairs.
+            Aggregated continuously from <strong>SpareRoom</strong>, <strong>Thanet Council</strong>, <strong>OpenRent</strong>, <strong>Gumtree</strong>, and local agents.
+          </p>
+
+          <!-- Hero Search Capsule -->
+          <div class="hero-search-capsule" id="hero-search-box">
+            <input type="text" id="hero-search-input" placeholder="Search by area, road, or postcode (e.g. Margate, Cliftonville, CT11)..." aria-label="Search properties">
+            <button class="hero-search-arrow-btn" id="hero-search-submit" aria-label="Submit search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Filter Bar (overlapping hero bottom) -->
+    <div class="filter-bar-wrapper">
+      <div class="filter-bar" id="search-filter-bar">
+        <!-- Area / Town -->
+        <div class="filter-item" id="filter-town" tabindex="0">
+          <div class="filter-header">
+            <span class="filter-label">Town / Area</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <span class="filter-value" id="town-value">All Thanet</span>
+          <!-- Dropdown Options -->
+          <div class="filter-dropdown" id="dropdown-town">
+            <div class="dropdown-opt active-opt" data-val="All Thanet">All Thanet</div>
+            <div class="dropdown-opt" data-val="Margate">Margate (CT9)</div>
+            <div class="dropdown-opt" data-val="Ramsgate">Ramsgate (CT11/12)</div>
+            <div class="dropdown-opt" data-val="Broadstairs">Broadstairs (CT10)</div>
+            <div class="dropdown-opt" data-val="Birchington">Birchington-on-Sea (CT7)</div>
+            <div class="dropdown-opt" data-val="Westgate">Westgate-on-Sea (CT8)</div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- Tipology / Property Type -->
+        <div class="filter-item" id="filter-type" tabindex="0">
+          <div class="filter-header">
+            <span class="filter-label">Property Type</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <span class="filter-value" id="type-value">All Types</span>
+          <!-- Dropdown Options -->
+          <div class="filter-dropdown" id="dropdown-type">
+            <div class="dropdown-opt active-opt" data-val="All Types">All Types</div>
+            <div class="dropdown-opt" data-val="Room">Room / Flatshare</div>
+            <div class="dropdown-opt" data-val="Studio">Studio Flat</div>
+            <div class="dropdown-opt" data-val="1-Bed">1-Bedroom Flat</div>
+            <div class="dropdown-opt" data-val="Council Scheme">Council / Affordable Scheme</div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- Max Budget -->
+        <div class="filter-item" id="filter-price" tabindex="0">
+          <div class="filter-header">
+            <span class="filter-label">Max Rent</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <span class="filter-value" id="price-value">Any Budget</span>
+          <!-- Dropdown Options -->
+          <div class="filter-dropdown" id="dropdown-price">
+            <div class="dropdown-opt active-opt" data-val="Any Budget" data-max="99999">Any Budget</div>
+            <div class="dropdown-opt" data-val="Up to £500/mo" data-max="500">Up to £500 / mo</div>
+            <div class="dropdown-opt" data-val="Up to £600/mo" data-max="600">Up to £600 / mo</div>
+            <div class="dropdown-opt" data-val="Up to £700/mo" data-max="700">Up to £700 / mo</div>
+            <div class="dropdown-opt" data-val="Up to £850/mo" data-max="850">Up to £850 / mo</div>
+          </div>
+        </div>
+
+        <!-- Search Action Button -->
+        <button class="filter-search-btn" id="filter-submit-btn">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Filter</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Aggregator Controls & Quick Filters -->
+  <section class="sources-nav-bar" id="sources-overview">
+    <div class="container">
+      <div class="sources-strip">
+        <span class="sources-label">Sources:</span>
+        <div class="source-pills" id="source-pills-container">
+          <button class="source-pill active" data-source="ALL">All Portals</button>
+          <button class="source-pill" data-source="SpareRoom"><span class="pill-dot spareroom-dot"></span>SpareRoom</button>
+          <button class="source-pill" data-source="Thanet Council"><span class="pill-dot council-dot"></span>Thanet Council / Kent Homechoice</button>
+          <button class="source-pill" data-source="OpenRent"><span class="pill-dot openrent-dot"></span>OpenRent</button>
+          <button class="source-pill" data-source="Gumtree"><span class="pill-dot gumtree-dot"></span>Gumtree</button>
+          <button class="source-pill" data-source="Local Agents"><span class="pill-dot agents-dot"></span>Local Agents</button>
+        </div>
+
+        <div class="quick-feature-toggles">
+          <button class="toggle-btn" id="toggle-lha" data-active="false">
+            <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4.5v6.5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6.5L12 2z"/></svg>
+            Within LHA Rates
+          </button>
+          <button class="toggle-btn" id="toggle-bills" data-active="false">
+            <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Bills Included
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Aggregated Listings Section -->
+  <main>
+    <section class="section-listings" id="aggregator-section">
+      <div class="container">
+        <!-- Results Header -->
+        <div class="results-header-flex">
+          <div>
+            <h2 class="section-title">Cheap Rentals in Thanet</h2>
+            <p class="section-subtitle" id="results-count-text">
+              Showing 12 listings across Margate, Ramsgate & Broadstairs
+            </p>
+          </div>
+          <div class="results-meta-actions">
+            <div class="feed-status-badge">
+              <span class="live-indicator"></span> Auto-synced feed
+            </div>
+            <select id="sort-select" class="sort-dropdown" aria-label="Sort listings">
+              <option value="price_asc">Price: Lowest First (£)</option>
+              <option value="price_desc">Price: Highest First (£)</option>
+              <option value="recent">Recently Added</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Property Cards Grid -->
+        <div class="property-grid" id="property-card-grid">
+          <!-- Populated dynamically by app.js -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+          <div class="empty-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <h3>No properties match your filter criteria</h3>
+          <p>Try widening your budget or selecting "All Thanet" to see more listings.</p>
+          <button class="btn-reset-filters" id="btn-reset-filters">Reset Filters</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Thanet Renter Guide & Council Scheme Section -->
+    <section class="section-method" id="thanet-guide">
+      <div class="container">
+        <div class="method-layout">
+          <!-- Left Visual Card -->
+          <div class="method-visual">
+            <div class="method-card-frame">
+              <img src="assets/feature_house.jpg" alt="Thanet coastline and housing" class="method-img">
+              <!-- Thanet Badge -->
+              <div class="method-house-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M3 10.5L12 3l9 7.5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"></path>
+                  <polyline points="9 21 9 12 15 12 15 21"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Content Details -->
+          <div class="method-content">
+            <h2 class="method-title">
+              How to Secure Cheap<br>
+              Housing in Thanet
+            </h2>
+            <p class="method-description">
+              Renting on a budget in Margate, Ramsgate, and Broadstairs requires knowing where to look and understanding local council assistance. BrightRent brings all pathways together.
+            </p>
+
+            <div class="features-list">
+              <div class="feature-item">
+                <div class="feature-num">01</div>
+                <div class="feature-info">
+                  <h4>SpareRoom Flatshares & Rooms</h4>
+                  <p>Often includes utilities, council tax, and Wi-Fi. Ideal for single renters looking for immediate availability under £550/mo with lower upfront deposits.</p>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="feature-num">02</div>
+                <div class="feature-info">
+                  <h4>Thanet Council & Kent Homechoice</h4>
+                  <p>Thanet District Council participates in Kent Homechoice for social housing. They also offer a <em>Private Sector Leasing & Deposit Bond Scheme</em> that guarantees rent for landlords willing to accept Universal Credit.</p>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="feature-num">03</div>
+                <div class="feature-info">
+                  <h4>OpenRent Direct-from-Landlords</h4>
+                  <p>Zero tenant administration fees, direct communication with property owners, and transparent tenancy deposit protection under government DPS schemes.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="method-actions">
+              <a href="https://www.thanet.gov.uk/info-category/housing/" target="_blank" rel="noopener noreferrer" class="btn-primary-method">Thanet Housing Portal ↗</a>
+              <div class="stats-badge">
+                <span class="stat-number">£425 /mo</span>
+                <span class="stat-label">Thanet LHA Room Rate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="contacts">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-icon-wrap footer-logo-icon">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"></path>
+              <polyline points="9 21 9 12 15 12 15 21"></polyline>
+            </svg>
+          </div>
+          <span class="logo-text">BrightRent Thanet</span>
+        </div>
+        <p class="footer-tagline">
+          The premier open aggregator for budget rentals, room shares, and council assistance across Thanet, Kent.
+        </p>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#hero-section">Home</a></li>
+          <li><a href="#aggregator-section">Cheap Listings</a></li>
+          <li><a href="#sources-overview">Source Providers</a></li>
+          <li><a href="#thanet-guide">Thanet Rent Guide</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Thanet Areas</h4>
+        <ul>
+          <li><a href="#aggregator-section" class="footer-area-link" data-town="Margate">Margate (CT9)</a></li>
+          <li><a href="#aggregator-section" class="footer-area-link" data-town="Ramsgate">Ramsgate (CT11/12)</a></li>
+          <li><a href="#aggregator-section" class="footer-area-link" data-town="Broadstairs">Broadstairs (CT10)</a></li>
+          <li><a href="#aggregator-section" class="footer-area-link" data-town="Birchington">Birchington-on-Sea</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Feed & Automation</h4>
+        <p class="newsletter-desc">Listings refreshed automatically every 6 hours via automated scraper pipeline.</p>
+        <div class="footer-badge-box">
+          <span>⚡ GitHub Actions Cron Active</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-flex">
+        <span>&copy; 2026 BrightRent Thanet. Listings belong to their respective portals (SpareRoom, OpenRent, Thanet District Council, Gumtree).</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy</a>
+          <a href="#">Fair Usage</a>
+          <a href="#">Report Listing</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
