@@ -1,5 +1,6 @@
 // ==========================================================================
 // BrightRent - Thanet Cheap Rent & Property Aggregator Logic
+// With Interactive Leaflet Map, LHA Allowance Filter & Alerts Modal
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,11 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     source: 'ALL',
     onlyLha: false,
     onlyBillsIncluded: false,
-    sortBy: 'price_asc'
+    sortBy: 'price_asc',
+    currentView: 'grid' // 'grid' | 'map'
   };
+
+  // Map variables
+  let leafletMap = null;
+  let markerLayerGroup = null;
 
   // Elements
   const gridContainer = document.getElementById('property-card-grid');
+  const mapViewContainer = document.getElementById('map-view-container');
   const countText = document.getElementById('results-count-text');
   const emptyState = document.getElementById('empty-state');
   const sortSelect = document.getElementById('sort-select');
@@ -29,7 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetFiltersBtn = document.getElementById('btn-reset-filters');
   const aggregatorSection = document.getElementById('aggregator-section');
 
-  // Source colors map
+  // View Switcher Elements
+  const btnViewGrid = document.getElementById('btn-view-grid');
+  const btnViewMap = document.getElementById('btn-view-map');
+
+  // Alert Modal Elements
+  const btnOpenAlertModal = document.getElementById('btn-open-alert-modal');
+  const alertModalOverlay = document.getElementById('alert-modal-overlay');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const rentAlertForm = document.getElementById('rent-alert-form');
+  const modalSuccessMsg = document.getElementById('modal-success-msg');
+
+  // LHA Rate Chips
+  const lhaChips = document.querySelectorAll('.lha-chip');
+
+  // Source brand colors map
   const sourceColors = {
     'SpareRoom': '#0b8484',
     'Thanet Council': '#2b5c8f',
@@ -79,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "Immediate",
           isCheapDeal: true,
           lhaCompliant: false,
+          lat: 51.3890,
+          lng: 1.3860,
           tags: ["Bills Included", "Super Deal", "5 min to Station"]
         },
         {
@@ -102,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "Next Cycle",
           isCheapDeal: true,
           lhaCompliant: true,
+          lat: 51.3450,
+          lng: 1.3980,
           tags: ["Council Allocation", "LHA Eligible", "Zero Deposit"]
         },
         {
@@ -125,6 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "1st Nov",
           isCheapDeal: true,
           lhaCompliant: true,
+          lat: 51.3915,
+          lng: 1.4010,
           tags: ["No Agency Fees", "LHA Rate Match", "Direct Landlord"]
         },
         {
@@ -148,6 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "Immediate",
           isCheapDeal: true,
           lhaCompliant: false,
+          lat: 51.3340,
+          lng: 1.4190,
           tags: ["En-Suite", "Bills Included", "Near Royal Harbour"]
         },
         {
@@ -171,6 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "Mid Nov",
           isCheapDeal: false,
           lhaCompliant: false,
+          lat: 51.3580,
+          lng: 1.4390,
           tags: ["Private Annexe", "Parking", "Broadstairs"]
         },
         {
@@ -194,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
           availableFrom: "Immediate",
           isCheapDeal: true,
           lhaCompliant: true,
+          lat: 51.3930,
+          lng: 1.4050,
           tags: ["Cheapest in Town", "Under LHA Rate", "Bills Included"]
         }
       ];
@@ -201,11 +234,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 3. Render Function
+  // 3. Leaflet Map Initialization
+  function initThanetMap() {
+    if (leafletMap || typeof L === 'undefined') return;
+
+    // Centered between Margate, Ramsgate and Broadstairs
+    leafletMap = L.map('thanet-map').setView([51.365, 1.385], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(leafletMap);
+
+    markerLayerGroup = L.layerGroup().addTo(leafletMap);
+  }
+
+  function updateMapMarkers(filteredListings) {
+    if (!leafletMap || !markerLayerGroup) return;
+
+    markerLayerGroup.clearLayers();
+    const bounds = [];
+
+    filteredListings.forEach(item => {
+      if (!item.lat || !item.lng) return;
+
+      const badgeBg = sourceColors[item.source] || '#0b253a';
+
+      // Custom HTML Marker Pin
+      const markerHtml = `
+        <div class="custom-map-marker" style="background-color: ${badgeBg}; width: 34px; height: 34px;">
+          £${item.pricePcm}
+        </div>
+      `;
+
+      const customIcon = L.divIcon({
+        className: 'custom-leaflet-pin',
+        html: markerHtml,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -18]
+      });
+
+      const popupContent = `
+        <div class="map-popup-card">
+          <img src="${item.image || 'assets/hero.jpg'}" alt="${item.title}">
+          <span style="font-size:0.7rem; font-weight:700; color:${badgeBg}; text-transform:uppercase;">${item.source} · ${item.town}</span>
+          <h4>${item.title}</h4>
+          <div class="popup-price">£${item.pricePcm} pcm</div>
+          <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer">View Listing ↗</a>
+        </div>
+      `;
+
+      const marker = L.marker([item.lat, item.lng], { icon: customIcon })
+        .bindPopup(popupContent);
+
+      markerLayerGroup.addLayer(marker);
+      bounds.push([item.lat, item.lng]);
+    });
+
+    if (bounds.length > 0) {
+      leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    }
+  }
+
+  // 4. Filter & Render Function
   function renderListings() {
     if (!gridContainer) return;
 
-    // Filter listings
+    // Filter listings based on current filter state
     let filtered = allListings.filter(item => {
       // Search query
       if (filterState.searchQuery) {
@@ -221,7 +317,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Property type filter
       if (filterState.propertyType !== 'All Types') {
-        if (item.propertyType.toLowerCase() !== filterState.propertyType.toLowerCase()) return false;
+        const selectedType = filterState.propertyType.toLowerCase();
+        if (selectedType.includes(',')) {
+          // Multiple types support (e.g. "studio,1-bed")
+          const types = selectedType.split(',');
+          if (!types.includes(item.propertyType.toLowerCase())) return false;
+        } else {
+          if (item.propertyType.toLowerCase() !== selectedType) return false;
+        }
       }
 
       // Max price
@@ -262,12 +365,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtered.length === 0) {
       gridContainer.innerHTML = '';
       if (emptyState) emptyState.style.display = 'block';
+      if (mapViewContainer) mapViewContainer.style.display = 'none';
       return;
     } else {
       if (emptyState) emptyState.style.display = 'none';
+      if (filterState.currentView === 'map' && mapViewContainer) {
+        mapViewContainer.style.display = 'block';
+      }
     }
 
-    // Generate HTML
+    // Render Cards Grid
     gridContainer.innerHTML = filtered.map(item => {
       const badgeBg = sourceColors[item.source] || '#0b253a';
       const dealBadge = item.isCheapDeal 
@@ -299,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="card-content">
             <div class="card-meta">
-              <span class="card-address" title="${item.area}, ${item.town} (${item.postcode})">
+              <span class="card-address" title="${item.area}, ${item.town} (${item.postcode || ''})">
                 📍 ${item.area}, ${item.town} ${item.postcode ? `· ${item.postcode.split(' ')[0]}` : ''}
               </span>
               <div class="card-amenities">
@@ -341,9 +448,114 @@ document.addEventListener('DOMContentLoaded', () => {
         </article>
       `;
     }).join('');
+
+    // Update map markers if map view is active or map is initialized
+    if (leafletMap) {
+      updateMapMarkers(filtered);
+    }
   }
 
-  // 4. Dropdown Interactivity for Hero Filter Bar
+  // 5. View Switcher (Grid vs Map)
+  if (btnViewGrid && btnViewMap) {
+    btnViewGrid.addEventListener('click', () => {
+      filterState.currentView = 'grid';
+      btnViewGrid.classList.add('active');
+      btnViewMap.classList.remove('active');
+      if (gridContainer) gridContainer.style.display = 'grid';
+      if (mapViewContainer) mapViewContainer.style.display = 'none';
+    });
+
+    btnViewMap.addEventListener('click', () => {
+      filterState.currentView = 'map';
+      btnViewMap.classList.add('active');
+      btnViewGrid.classList.remove('active');
+      if (gridContainer) gridContainer.style.display = 'none';
+      if (mapViewContainer) {
+        mapViewContainer.style.display = 'block';
+        initThanetMap();
+        setTimeout(() => {
+          if (leafletMap) leafletMap.invalidateSize();
+        }, 100);
+        renderListings();
+      }
+    });
+  }
+
+  // 6. LHA Rate Chips Click Handler
+  lhaChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const rate = parseInt(chip.getAttribute('data-rate'), 10);
+      const type = chip.getAttribute('data-type');
+
+      // Toggle active state
+      const wasActive = chip.classList.contains('active');
+      lhaChips.forEach(c => c.classList.remove('active'));
+
+      if (!wasActive) {
+        chip.classList.add('active');
+        filterState.maxPrice = rate;
+        filterState.propertyType = type;
+        document.getElementById('price-value').textContent = `Up to £${rate}/mo`;
+        document.getElementById('type-value').textContent = type.includes(',') ? 'Affordable Flat' : type;
+      } else {
+        filterState.maxPrice = 99999;
+        filterState.propertyType = 'All Types';
+        document.getElementById('price-value').textContent = 'Any Budget';
+        document.getElementById('type-value').textContent = 'All Types';
+      }
+
+      renderListings();
+      if (aggregatorSection) {
+        aggregatorSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // 7. Rent Alert Modal Functionality
+  if (btnOpenAlertModal && alertModalOverlay) {
+    btnOpenAlertModal.addEventListener('click', () => {
+      alertModalOverlay.style.display = 'flex';
+    });
+  }
+
+  if (modalCloseBtn && alertModalOverlay) {
+    modalCloseBtn.addEventListener('click', () => {
+      alertModalOverlay.style.display = 'none';
+    });
+  }
+
+  if (alertModalOverlay) {
+    alertModalOverlay.addEventListener('click', (e) => {
+      if (e.target === alertModalOverlay) {
+        alertModalOverlay.style.display = 'none';
+      }
+    });
+  }
+
+  if (rentAlertForm) {
+    rentAlertForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('alert-email').value;
+      const budget = document.getElementById('alert-budget').value;
+      const town = document.getElementById('alert-town').value;
+
+      const newAlert = { email, budget, town, createdAt: new Date().toISOString() };
+      const savedAlerts = JSON.parse(localStorage.getItem('brightrent_alerts') || '[]');
+      savedAlerts.push(newAlert);
+      localStorage.setItem('brightrent_alerts', JSON.stringify(savedAlerts));
+
+      if (modalSuccessMsg) {
+        modalSuccessMsg.style.display = 'block';
+        setTimeout(() => {
+          alertModalOverlay.style.display = 'none';
+          modalSuccessMsg.style.display = 'none';
+          rentAlertForm.reset();
+        }, 2200);
+      }
+    });
+  }
+
+  // 8. Dropdown Interactivity for Hero Filter Bar
   const filterItems = document.querySelectorAll('.filter-item');
   filterItems.forEach(item => {
     item.addEventListener('click', (e) => {
@@ -387,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 5. Source Pill Filters
+  // 9. Source Pill Filters
   const sourcePills = document.querySelectorAll('.source-pill');
   sourcePills.forEach(pill => {
     pill.addEventListener('click', () => {
@@ -398,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 6. Quick Feature Toggles (LHA & Bills)
+  // 10. Quick Feature Toggles (LHA & Bills)
   const toggleLha = document.getElementById('toggle-lha');
   if (toggleLha) {
     toggleLha.addEventListener('click', () => {
@@ -417,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Search Input Handlers
+  // 11. Search Input Handlers
   function executeSearch() {
     if (heroSearchInput) {
       filterState.searchQuery = heroSearchInput.value.trim();
@@ -437,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. Filter Bar Submit Button
+  // 12. Filter Bar Submit Button
   if (filterSubmitBtn && aggregatorSection) {
     filterSubmitBtn.addEventListener('click', () => {
       renderListings();
@@ -445,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 9. Sort Select Handler
+  // 13. Sort Select Handler
   if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
       filterState.sortBy = e.target.value;
@@ -453,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 10. Reset Filters Button
+  // 14. Reset Filters Button
   if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener('click', () => {
       filterState = {
@@ -464,7 +676,8 @@ document.addEventListener('DOMContentLoaded', () => {
         source: 'ALL',
         onlyLha: false,
         onlyBillsIncluded: false,
-        sortBy: 'price_asc'
+        sortBy: 'price_asc',
+        currentView: 'grid'
       };
 
       if (heroSearchInput) heroSearchInput.value = '';
@@ -476,12 +689,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (toggleLha) toggleLha.classList.remove('active');
       if (toggleBills) toggleBills.classList.remove('active');
       if (sortSelect) sortSelect.value = 'price_asc';
+      lhaChips.forEach(c => c.classList.remove('active'));
+
+      if (btnViewGrid && btnViewMap) {
+        btnViewGrid.classList.add('active');
+        btnViewMap.classList.remove('active');
+        if (gridContainer) gridContainer.style.display = 'grid';
+        if (mapViewContainer) mapViewContainer.style.display = 'none';
+      }
 
       renderListings();
     });
   }
 
-  // 11. Footer Town Links
+  // 15. Footer Town Links
   const footerAreaLinks = document.querySelectorAll('.footer-area-link');
   footerAreaLinks.forEach(link => {
     link.addEventListener('click', (e) => {

@@ -13,6 +13,9 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
     rel="stylesheet">
+  <!-- Leaflet.js for Interactive Thanet Property Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -210,14 +213,56 @@
             </p>
           </div>
           <div class="results-meta-actions">
+            <!-- Grid / Map View Switcher -->
+            <div class="view-switcher" id="view-switcher">
+              <button class="view-btn active" id="btn-view-grid" title="Grid View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Grid
+              </button>
+              <button class="view-btn" id="btn-view-map" title="Map View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                Map
+              </button>
+            </div>
+
+            <!-- Set Rent Alert Button -->
+            <button class="btn-alert-modal-trigger" id="btn-open-alert-modal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span>Set Alert</span>
+            </button>
+
             <div class="feed-status-badge">
-              <span class="live-indicator"></span> Auto-synced feed
+              <span class="live-indicator"></span> Auto-synced
             </div>
             <select id="sort-select" class="sort-dropdown" aria-label="Sort listings">
               <option value="price_asc">Price: Lowest First (£)</option>
               <option value="price_desc">Price: Highest First (£)</option>
               <option value="recent">Recently Added</option>
             </select>
+          </div>
+        </div>
+
+        <!-- LHA Rate Checker Banner -->
+        <div class="lha-checker-bar">
+          <div class="lha-checker-content">
+            <span class="lha-checker-badge">LHA Rates</span>
+            <span class="lha-checker-title">Thanet Local Housing Allowance:</span>
+            <button class="lha-chip" data-rate="425" data-type="Room" title="Filter Room within £425/mo">Shared Room: <strong>£425/mo</strong></button>
+            <button class="lha-chip" data-rate="595" data-type="Studio,1-Bed" title="Filter 1-Bed within £595/mo">1-Bed Flat: <strong>£595/mo</strong></button>
+            <button class="lha-chip" data-rate="750" data-type="2-Bed" title="Filter 2-Bed within £750/mo">2-Bed: <strong>£750/mo</strong></button>
+          </div>
+          <span class="lha-hint">Click a rate to filter qualifying homes</span>
+        </div>
+
+        <!-- Interactive Map Container (Hidden by default, shown when Map view active) -->
+        <div class="map-view-wrapper" id="map-view-container" style="display: none;">
+          <div id="thanet-map" class="thanet-map"></div>
+          <div class="map-legend">
+            <span><span class="legend-dot spareroom-dot"></span>SpareRoom</span>
+            <span><span class="legend-dot council-dot"></span>Thanet Council</span>
+            <span><span class="legend-dot openrent-dot"></span>OpenRent</span>
+            <span><span class="legend-dot gumtree-dot"></span>Gumtree</span>
+            <span><span class="legend-dot agents-dot"></span>Local Agents</span>
           </div>
         </div>
 
@@ -368,6 +413,50 @@
       </div>
     </div>
   </footer>
+
+  <!-- Cheap Rent Alert Modal -->
+  <div class="modal-overlay" id="alert-modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">&times;</button>
+      <div class="modal-header">
+        <div class="modal-icon">🔔</div>
+        <h3>Thanet Cheap Rent Alerts</h3>
+        <p>Get notified as soon as a cheap room, studio, or council-backed rental drops in Thanet.</p>
+      </div>
+      <form id="rent-alert-form" class="modal-form">
+        <div class="form-group">
+          <label for="alert-email">Your Email Address</label>
+          <input type="email" id="alert-email" placeholder="name@example.com" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="alert-budget">Max Budget</label>
+            <select id="alert-budget">
+              <option value="500">Under £500 / month</option>
+              <option value="600" selected>Under £600 / month</option>
+              <option value="750">Under £750 / month</option>
+              <option value="900">Under £900 / month</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="alert-town">Area</label>
+            <select id="alert-town">
+              <option value="All">All Thanet</option>
+              <option value="Margate">Margate (CT9)</option>
+              <option value="Ramsgate">Ramsgate (CT11/12)</option>
+              <option value="Broadstairs">Broadstairs (CT10)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="modal-submit-btn">Create Free Alert</button>
+      </form>
+      <div id="modal-success-msg" class="modal-success" style="display: none;">
+        ✓ Alert activated! We'll alert you as soon as new matching listings are aggregated.
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

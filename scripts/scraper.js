@@ -399,6 +399,15 @@ async function scrapeGumtreeAndAgents() {
   ];
 }
 
+const THANET_COORDINATES = {
+  'Margate': { lat: 51.3890, lng: 1.3860 },
+  'Cliftonville': { lat: 51.3915, lng: 1.4010 },
+  'Ramsgate': { lat: 51.3340, lng: 1.4190 },
+  'Broadstairs': { lat: 51.3580, lng: 1.4390 },
+  'Birchington': { lat: 51.3780, lng: 1.3050 },
+  'Westgate': { lat: 51.3830, lng: 1.3380 }
+};
+
 /**
  * Deduplication & Enrichment Pipeline
  */
@@ -424,6 +433,19 @@ function deduplicateAndEnrich(items) {
 
     // Flag super deals (< £550 pcm in Thanet)
     item.isCheapDeal = item.pricePcm <= 550;
+
+    // Attach map coordinates
+    const baseCoord = THANET_COORDINATES[item.town] || THANET_COORDINATES['Margate'];
+    // Jitter by hash of ID for stable consistent pins
+    let hash = 0;
+    for (let i = 0; i < (item.id || '').length; i++) {
+      hash = (hash << 5) - hash + item.id.charCodeAt(i);
+      hash |= 0;
+    }
+    const offsetLat = ((hash % 100) / 10000) * 0.8;
+    const offsetLng = (((hash >> 2) % 100) / 10000) * 0.8;
+    item.lat = Number((baseCoord.lat + offsetLat).toFixed(5));
+    item.lng = Number((baseCoord.lng + offsetLng).toFixed(5));
 
     unique.push(item);
   }

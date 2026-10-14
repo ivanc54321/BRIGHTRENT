@@ -2,7 +2,7 @@
   "meta": {
     "title": "BrightRent Thanet Cheap Rent Aggregator Feed",
     "region": "Thanet, Kent (Margate, Ramsgate, Broadstairs, Cliftonville, Birchington, Westgate)",
-    "lastUpdated": "2026-10-14T12:39:10.429Z",
+    "lastUpdated": "2026-10-14T12:53:53.827Z",
     "totalListings": 12,
     "sourcesCount": {
       "SpareRoom": 4,
@@ -47,7 +47,9 @@
         "Under LHA Rate",
         "Bills Included",
         "Garden"
-      ]
+      ],
+      "lat": 51.39372,
+      "lng": 1.39112
     },
     {
       "id": "tc-khc-002",
@@ -77,7 +79,9 @@
         "LHA Eligible",
         "Zero Deposit",
         "Long-term Security"
-      ]
+      ],
+      "lat": 51.3376,
+      "lng": 1.41988
     },
     {
       "id": "gumtree-ct11-011",
@@ -106,7 +110,9 @@
         "Guarantor / DSS OK",
         "Low Deposit",
         "Central Location"
-      ]
+      ],
+      "lat": 51.33976,
+      "lng": 1.42644
     },
     {
       "id": "sr-ct12-010",
@@ -136,7 +142,9 @@
         "Bills Included",
         "Quiet Location",
         "Garden"
-      ]
+      ],
+      "lat": 51.38424,
+      "lng": 1.30852
     },
     {
       "id": "sr-ct9-001",
@@ -166,7 +174,9 @@
         "Super Deal",
         "Furnished",
         "5 min to Station"
-      ]
+      ],
+      "lat": 51.39332,
+      "lng": 1.39104
     },
     {
       "id": "sr-ct11-004",
@@ -196,7 +206,9 @@
         "Bills Included",
         "Near Royal Harbour",
         "Fast Wi-Fi"
-      ]
+      ],
+      "lat": 51.3364,
+      "lng": 1.42356
     },
     {
       "id": "tc-prs-007",
@@ -225,7 +237,9 @@
         "Council Bond",
         "DSS / Universal Credit Accepted",
         "No Deposit Required"
-      ]
+      ],
+      "lat": 51.3894,
+      "lng": 1.39008
     },
     {
       "id": "openrent-ct9-003",
@@ -255,7 +269,9 @@
         "LHA Rate Match",
         "Direct Landlord",
         "Ground Floor"
-      ]
+      ],
+      "lat": 51.389,
+      "lng": 1.38
     },
     {
       "id": "agent-mb-009",
@@ -284,7 +300,9 @@
         "Seafront Views",
         "EPC C",
         "Secure Entry"
-      ]
+      ],
+      "lat": 51.3958,
+      "lng": 1.38968
     },
     {
       "id": "openrent-ct11-008",
@@ -314,7 +332,9 @@
         "No Fees",
         "Near Station",
         "Modern Kitchen"
-      ]
+      ],
+      "lat": 51.3268,
+      "lng": 1.41716
     },
     {
       "id": "agent-ow-012",
@@ -343,7 +363,9 @@
         "Private Courtyard",
         "Near Beach",
         "Desirable Westgate"
-      ]
+      ],
+      "lat": 51.38716,
+      "lng": 1.33904
     },
     {
       "id": "gumtree-ct10-005",
@@ -373,7 +395,9 @@
         "Parking",
         "Broadstairs",
         "Near Beach"
-      ]
+      ],
+      "lat": 51.35992,
+      "lng": 1.43948
     }
   ]
 }
